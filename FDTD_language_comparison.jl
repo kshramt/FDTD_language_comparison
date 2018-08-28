@@ -30,10 +30,10 @@ function run()
 
 	  # 更新（ここが FDTD の本体）
 	  # 粒子速度の更新
-	  Vx[2:NX,:] = Vx[2:NX,:] - dt / (ρ * dx) * ( P[2:NX,:] - P[1:NX-1,:] );
-	  Vy[:,2:NY] = Vy[:,2:NY] - dt / (ρ * dx) * ( P[:,2:NY] - P[:,1:NY-1] );
+	  Vx[2:NX,:] .-= (dt / (ρ * dx)) .* ( P[2:NX,:] .- P[1:NX-1,:] )
+	  Vy[:,2:NY] .-= (dt / (ρ * dx)) .* ( P[:,2:NY] .- P[:,1:NY-1] )
 	  # 音圧の更新
-	  P[1:NX,1:NY] = P[1:NX,1:NY] - ( κ * dt / dx ) * ( ( Vx[2:NX+1,:] - Vx[1:NX,:] ) + ( Vy[:,2:NY+1] - Vy[:,1:NY] ) );
+	  P .-= ( κ * dt / dx ) .* ( ( Vx[2:NX+1,:] .- Vx[1:NX,:] ) .+ ( Vy[:,2:NY+1] .- Vy[:,1:NY] ) )
 
 	  # 初期波形を準備（正弦波×１波 with ハン窓）
 	  if n < (1.0/freq)/dt
@@ -43,7 +43,7 @@ function run()
 	  end
 
 	  # 音源
-	  P[Int32(floor(NX/4+1)),Int32(floor(NY/3+1))] = sig
+	  P[floor(Int, NX/4+1),floor(Int, NY/3+1)] = sig
 
 	  # # 波形ファイル出力（時刻, 音源, 中央点の音圧）
 	  # write(waveformfile,"$(dt*n)\t$sig\t$(P[Int32(floor(NX/2+1)),Int32(floor(NY/2+1))])\n")

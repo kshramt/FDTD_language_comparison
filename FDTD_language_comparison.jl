@@ -2,6 +2,18 @@
 
 # using Printf
 
+function update_Vx(P, Vx, NX, dx, dt, ρ)
+    Vx[2:NX,:] .-= (dt / (ρ * dx)) .* ( P[2:NX,:] .- P[1:NX-1,:] )
+end
+
+function update_Vy(P, Vy, NY, dx, dt, ρ)
+    Vy[:,2:NY] .-= (dt / (ρ * dx)) .* ( P[:,2:NY] .- P[:,1:NY-1] )
+end
+
+function update_P(P, Vx, Vy, NX, NY, dx, dt, κ)
+    P .-= ( κ * dt / dx ) .* ( ( Vx[2:NX+1,:] .- Vx[1:NX,:] ) .+ ( Vy[:,2:NY+1] .- Vy[:,1:NY] ) )
+end
+
 function run()
 
     NX = 300								# 空間セル数 X [pixels]
@@ -30,10 +42,11 @@ function run()
 
 	  # 更新（ここが FDTD の本体）
 	  # 粒子速度の更新
-	  Vx[2:NX,:] .-= (dt / (ρ * dx)) .* ( P[2:NX,:] .- P[1:NX-1,:] )
-	  Vy[:,2:NY] .-= (dt / (ρ * dx)) .* ( P[:,2:NY] .- P[:,1:NY-1] )
+        update_Vx(P, Vx, NX, dx, dt, ρ)
+        update_Vy(P, Vy, NY, dx, dt, ρ)
+
 	  # 音圧の更新
-	  P .-= ( κ * dt / dx ) .* ( ( Vx[2:NX+1,:] .- Vx[1:NX,:] ) .+ ( Vy[:,2:NY+1] .- Vy[:,1:NY] ) )
+        update_P(P, Vx, Vy, NX, NY, dx, dt, κ)
 
 	  # 初期波形を準備（正弦波×１波 with ハン窓）
 	  if n < (1.0/freq)/dt

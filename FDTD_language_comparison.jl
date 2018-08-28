@@ -1,6 +1,6 @@
 # 二次元音響FDTD速度比較 by Yoshiki NAGATANI 20180827 (https://ultrasonics.jp/nagatani/fdtd/)
 
-using Printf
+# using Printf
 
 NX = 300								# 空間セル数 X [pixels]
 NY = 400								# 空間セル数 Y [pixels]
@@ -20,8 +20,8 @@ Vy = zeros(Float64, NX,  NY+1)			# y方向粒子速度 [m/s]
 P  = zeros(Float64, NX,  NY  )			# 音圧 [Pa]
 
 
-# 事前準備 #########################################################
-waveformfile = open("waveform.txt", "w")
+# # 事前準備 #########################################################
+# waveformfile = open("waveform.txt", "w")
 
 # メインループ #########################################################
 for n = 0:Nstep
@@ -43,23 +43,23 @@ for n = 0:Nstep
 	# 音源
 	P[Int32(floor(NX/4+1)),Int32(floor(NY/3+1))] = sig
 
-	# 波形ファイル出力（時刻, 音源, 中央点の音圧）
-	write(waveformfile,"$(dt*n)\t$sig\t$(P[Int32(floor(NX/2+1)),Int32(floor(NY/2+1))])\n")
-	@printf("%5d / %5d\r", n, Nstep);
+	# # 波形ファイル出力（時刻, 音源, 中央点の音圧）
+	# write(waveformfile,"$(dt*n)\t$sig\t$(P[Int32(floor(NX/2+1)),Int32(floor(NY/2+1))])\n")
+	# @printf("%5d / %5d\r", n, Nstep);
 
-	# 音圧分布ファイル出力（50ステップ毎）
-	if n % 50 == 0
-		fieldfilename = @sprintf("field%06d.txt",n)
-		fieldfile = open(fieldfilename,"w")
-		for i=1:NX
-			for j=1:NY
-				write(fieldfile,"$(P[i,j])\t")
-			end
-			write(fieldfile,"\n")
-		end
-		close(fieldfile)
-	end
+	# # 音圧分布ファイル出力（50ステップ毎）
+	# if n % 50 == 0
+	# 	fieldfilename = @sprintf("field%06d.txt",n)
+	# 	fieldfile = open(fieldfilename,"w")
+	# 	for i=1:NX
+	# 		for j=1:NY
+	# 			write(fieldfile,"$(P[i,j])\t")
+	# 		end
+	# 		write(fieldfile,"\n")
+	# 	end
+	# 	close(fieldfile)
+	# end
 end
 
-# 事後処理 #########################################################
-close(waveformfile)
+# # 事後処理 #########################################################
+# close(waveformfile)
